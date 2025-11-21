@@ -7,59 +7,181 @@ namespace BusquedaEstudiantes
 {
     public partial class Form1 : Form
     {
+        // ----- CONTROLES -----
+        private TextBox txtID;
+        private Button btnBuscarID;
+        private TextBox txtNombre;
+        private Button btnBuscarNombre;
+        private ListBox listBoxResultado;
+
+        // ----- CLASE ESTUDIANTE -----
+        public class Estudiante
+        {
+            public int Id { get; set; }
+            public string Nombre { get; set; }
+
+            public override string ToString()
+            {
+                return $"{Id} - {Nombre}";
+            }
+        }
+
+        // Lista principal
+        List<Estudiante> estudiantes;
+
         public Form1()
         {
             InitializeComponent();
+            CrearControles(); // Crear controles por c贸digo
 
-            // Creamos los controles din醡icamente
-            TextBox txtNumeros = new TextBox() { Top = 20, Left = 20, Width = 200 };
-            Button btnBuscar = new Button() { Top = 60, Left = 20, Text = "Buscar M醲/Min" };
-            Label lblResultado = new Label() { Top = 100, Left = 20, Width = 300, Height = 60 };
-
-            this.Controls.Add(txtNumeros);
-            this.Controls.Add(btnBuscar);
-            this.Controls.Add(lblResultado);
-
-            // Evento click del bot髇
-            btnBuscar.Click += (s, e) =>
+            // Inicializar la lista de estudiantes aqu铆
+            estudiantes = new List<Estudiante>()
             {
-                try
-                {
-                    // Convertimos el texto a lista de enteros
-                    List<int> numeros = txtNumeros.Text.Split(',')
-                                                      .Select(n => int.Parse(n.Trim()))
-                                                      .ToList();
-
-                    var resultado = BuscarMaxMin(numeros);
-
-                    // Mostramos resultado
-                    lblResultado.Text = $"M醲imo: {resultado.max}\nM韓imo: {resultado.min}\nIteraciones: {resultado.iteraciones}";
-                }
-                catch
-                {
-                    lblResultado.Text = "Error: ingresa n鷐eros v醠idos separados por comas";
-                }
+                new Estudiante {Id = 1, Nombre="Ana"},
+                new Estudiante {Id = 2, Nombre="Brenda"},
+                new Estudiante {Id = 3, Nombre="Carlos"},
+                new Estudiante {Id = 4, Nombre="Daniel"},
+                new Estudiante {Id = 5, Nombre="Elena"},
+                new Estudiante {Id = 6, Nombre="Fernanda"},
+                new Estudiante {Id = 7, Nombre="Gabriel"},
+                new Estudiante {Id = 8, Nombre="Hector"},
+                new Estudiante {Id = 9, Nombre="Isabel"},
+                new Estudiante {Id = 10, Nombre="Juan"}
             };
+
+            ActualizarLista();
         }
 
-        // M閠odo para encontrar m醲imo, m韓imo y cantidad de iteraciones
-        private (int max, int min, int iteraciones) BuscarMaxMin(List<int> lista)
+        // ==========================
+        // CREAR CONTROLES POR C脫DIGO
+        // ==========================
+        void CrearControles()
         {
-            if (lista == null || lista.Count == 0)
-                throw new ArgumentException("La lista no puede estar vac韆");
+            // ----- Label ID -----
+            Label lblID = new Label();
+            lblID.Text = "Buscar por ID:";
+            lblID.Location = new System.Drawing.Point(20, 20);
+            this.Controls.Add(lblID);
 
-            int max = lista[0];
-            int min = lista[0];
-            int iteraciones = 0;
+            // ----- TextBox ID -----
+            txtID = new TextBox();
+            txtID.Location = new System.Drawing.Point(20, 45);
+            txtID.Width = 120;
+            this.Controls.Add(txtID);
 
-            foreach (int num in lista)
+            // ----- Bot贸n buscar ID -----
+            btnBuscarID = new Button();
+            btnBuscarID.Text = "Buscar ID";
+            btnBuscarID.Location = new System.Drawing.Point(150, 43);
+            btnBuscarID.Click += btnBuscarID_Click;
+            this.Controls.Add(btnBuscarID);
+
+            // ----- Label Nombre -----
+            Label lblNombre = new Label();
+            lblNombre.Text = "Buscar por Nombre:";
+            lblNombre.Location = new System.Drawing.Point(20, 90);
+            this.Controls.Add(lblNombre);
+
+            // ----- TextBox Nombre -----
+            txtNombre = new TextBox();
+            txtNombre.Location = new System.Drawing.Point(20, 115);
+            txtNombre.Width = 120;
+            this.Controls.Add(txtNombre);
+
+            // ----- Bot贸n buscar Nombre -----
+            btnBuscarNombre = new Button();
+            btnBuscarNombre.Text = "Buscar Nombre";
+            btnBuscarNombre.Location = new System.Drawing.Point(150, 113);
+            btnBuscarNombre.Click += btnBuscarNombre_Click;
+            this.Controls.Add(btnBuscarNombre);
+
+            // ----- ListBox Resultado -----
+            listBoxResultado = new ListBox();
+            listBoxResultado.Location = new System.Drawing.Point(20, 160);
+            listBoxResultado.Size = new System.Drawing.Size(260, 200);
+            this.Controls.Add(listBoxResultado);
+        }
+
+        // ==============================
+        // MOSTRAR TODOS LOS ESTUDIANTES
+        // ==============================
+        void ActualizarLista()
+        {
+            listBoxResultado.Items.Clear();
+            foreach (var est in estudiantes)
+                listBoxResultado.Items.Add(est);
+        }
+
+        // ================================
+        // B脷SQUEDA LINEAL POR ID
+        // ================================
+        private void btnBuscarID_Click(object sender, EventArgs e)
+        {
+            if (!int.TryParse(txtID.Text, out int idBuscado))
             {
-                iteraciones++;
-                if (num > max) max = num;
-                if (num < min) min = num;
+                MessageBox.Show("Ingrese un ID v谩lido.");
+                return;
             }
 
-            return (max, min, iteraciones);
+            Estudiante encontrado = null;
+
+            foreach (var est in estudiantes)
+            {
+                if (est.Id == idBuscado)
+                {
+                    encontrado = est;
+                    break;
+                }
+            }
+
+            listBoxResultado.Items.Clear();
+            listBoxResultado.Items.Add(encontrado != null
+                ? "Encontrado: " + encontrado
+                : "No existe estudiante con ese ID");
+        }
+
+        // ================================
+        // B脷SQUEDA BINARIA POR NOMBRE
+        // ================================
+        private void btnBuscarNombre_Click(object sender, EventArgs e)
+        {
+            string nombreBuscado = txtNombre.Text.Trim();
+
+            if (string.IsNullOrEmpty(nombreBuscado))
+            {
+                MessageBox.Show("Ingrese un nombre.");
+                return;
+            }
+
+            // Normalizar nombres a may煤sculas para comparaci贸n
+            string nombreBuscadoNorm = nombreBuscado.ToUpperInvariant();
+            var listaOrdenada = estudiantes.OrderBy(x => x.Nombre.ToUpperInvariant()).ToList();
+
+            int inicio = 0;
+            int fin = listaOrdenada.Count - 1;
+            Estudiante encontrado = null;
+
+            while (inicio <= fin)
+            {
+                int medio = (inicio + fin) / 2;
+                string medioNombre = listaOrdenada[medio].Nombre.ToUpperInvariant();
+                int comp = string.Compare(medioNombre, nombreBuscadoNorm, StringComparison.Ordinal);
+
+                if (comp == 0)
+                {
+                    encontrado = listaOrdenada[medio];
+                    break;
+                }
+                else if (comp < 0)
+                    inicio = medio + 1;
+                else
+                    fin = medio - 1;
+            }
+
+            listBoxResultado.Items.Clear();
+            listBoxResultado.Items.Add(encontrado != null
+                ? "Encontrado: " + encontrado
+                : "No existe estudiante con ese nombre");
         }
     }
 }
