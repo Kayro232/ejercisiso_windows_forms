@@ -7,14 +7,14 @@ namespace BusquedaEstudiantes
 {
     public partial class Form1 : Form
     {
-        // ----- CONTROLES -----
+     
         private TextBox txtID;
         private Button btnBuscarID;
         private TextBox txtNombre;
         private Button btnBuscarNombre;
         private ListBox listBoxResultado;
 
-        // ----- CLASE ESTUDIANTE -----
+  
         public class Estudiante
         {
             public int Id { get; set; }
@@ -26,13 +26,13 @@ namespace BusquedaEstudiantes
             }
         }
 
-        // Lista principal
+
         List<Estudiante> estudiantes;
 
         public Form1()
         {
             InitializeComponent();
-            CrearControles(); // Crear controles por código
+            CrearControles(); 
 
             // Inicializar la lista de estudiantes aquí
             estudiantes = new List<Estudiante>()
@@ -52,24 +52,22 @@ namespace BusquedaEstudiantes
             ActualizarLista();
         }
 
-        // ==========================
-        // CREAR CONTROLES POR CÓDIGO
-        // ==========================
+
         void CrearControles()
         {
-            // ----- Label ID -----
+
             Label lblID = new Label();
             lblID.Text = "Buscar por ID:";
             lblID.Location = new System.Drawing.Point(20, 20);
             this.Controls.Add(lblID);
 
-            // ----- TextBox ID -----
+   
             txtID = new TextBox();
             txtID.Location = new System.Drawing.Point(20, 45);
             txtID.Width = 120;
             this.Controls.Add(txtID);
 
-            // ----- Botón buscar ID -----
+   
             btnBuscarID = new Button();
             btnBuscarID.Text = "Buscar ID";
             btnBuscarID.Location = new System.Drawing.Point(150, 43);
@@ -82,29 +80,27 @@ namespace BusquedaEstudiantes
             lblNombre.Location = new System.Drawing.Point(20, 90);
             this.Controls.Add(lblNombre);
 
-            // ----- TextBox Nombre -----
+     
             txtNombre = new TextBox();
             txtNombre.Location = new System.Drawing.Point(20, 115);
             txtNombre.Width = 120;
             this.Controls.Add(txtNombre);
 
-            // ----- Botón buscar Nombre -----
+        
             btnBuscarNombre = new Button();
             btnBuscarNombre.Text = "Buscar Nombre";
             btnBuscarNombre.Location = new System.Drawing.Point(150, 113);
             btnBuscarNombre.Click += btnBuscarNombre_Click;
             this.Controls.Add(btnBuscarNombre);
 
-            // ----- ListBox Resultado -----
+         
             listBoxResultado = new ListBox();
             listBoxResultado.Location = new System.Drawing.Point(20, 160);
             listBoxResultado.Size = new System.Drawing.Size(260, 200);
             this.Controls.Add(listBoxResultado);
         }
 
-        // ==============================
-        // MOSTRAR TODOS LOS ESTUDIANTES
-        // ==============================
+
         void ActualizarLista()
         {
             listBoxResultado.Items.Clear();
@@ -112,9 +108,7 @@ namespace BusquedaEstudiantes
                 listBoxResultado.Items.Add(est);
         }
 
-        // ================================
-        // BÚSQUEDA LINEAL POR ID
-        // ================================
+
         private void btnBuscarID_Click(object sender, EventArgs e)
         {
             if (!int.TryParse(txtID.Text, out int idBuscado))
@@ -140,9 +134,7 @@ namespace BusquedaEstudiantes
                 : "No existe estudiante con ese ID");
         }
 
-        // ================================
-        // BÚSQUEDA BINARIA POR NOMBRE
-        // ================================
+
         private void btnBuscarNombre_Click(object sender, EventArgs e)
         {
             string nombreBuscado = txtNombre.Text.Trim();
