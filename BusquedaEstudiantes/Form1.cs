@@ -11,42 +11,42 @@ namespace BusquedaEstudiantes
         {
             InitializeComponent();
 
-            // Creamos los controles dinámicamente
+
             TextBox txtNumeros = new TextBox() { Top = 20, Left = 20, Width = 200 };
-            Button btnBuscar = new Button() { Top = 60, Left = 20, Text = "Buscar Máx/Min" };
+            Button btnBuscar = new Button() { Top = 60, Left = 20, Text = "Buscar MÃ¡x/Min" };
             Label lblResultado = new Label() { Top = 100, Left = 20, Width = 300, Height = 60 };
 
             this.Controls.Add(txtNumeros);
             this.Controls.Add(btnBuscar);
             this.Controls.Add(lblResultado);
 
-            // Evento click del botón
+
             btnBuscar.Click += (s, e) =>
             {
                 try
                 {
-                    // Convertimos el texto a lista de enteros
+
                     List<int> numeros = txtNumeros.Text.Split(',')
                                                       .Select(n => int.Parse(n.Trim()))
                                                       .ToList();
 
                     var resultado = BuscarMaxMin(numeros);
 
-                    // Mostramos resultado
-                    lblResultado.Text = $"Máximo: {resultado.max}\nMínimo: {resultado.min}\nIteraciones: {resultado.iteraciones}";
+
+                    lblResultado.Text = $"MÃ¡ximo: {resultado.max}\nMÃ­nimo: {resultado.min}\nIteraciones: {resultado.iteraciones}";
                 }
                 catch
                 {
-                    lblResultado.Text = "Error: ingresa números válidos separados por comas";
+                    lblResultado.Text = "Error: ingresa nÃºmeros vÃ¡lidos separados por comas";
                 }
             };
         }
 
-        // Método para encontrar máximo, mínimo y cantidad de iteraciones
+
         private (int max, int min, int iteraciones) BuscarMaxMin(List<int> lista)
         {
             if (lista == null || lista.Count == 0)
-                throw new ArgumentException("La lista no puede estar vacía");
+                throw new ArgumentException("La lista no puede estar vacÃ­a");
 
             int max = lista[0];
             int min = lista[0];
