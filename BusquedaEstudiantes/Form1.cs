@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -7,59 +6,78 @@ namespace BusquedaEstudiantes
 {
     public partial class Form1 : Form
     {
+        private int[] lista; 
+
         public Form1()
         {
             InitializeComponent();
 
-            // Creamos los controles dinámicamente
-            TextBox txtNumeros = new TextBox() { Top = 20, Left = 20, Width = 200 };
-            Button btnBuscar = new Button() { Top = 60, Left = 20, Text = "Buscar Máx/Min" };
-            Label lblResultado = new Label() { Top = 100, Left = 20, Width = 300, Height = 60 };
+     
+            TextBox txtNumeroBuscar = new TextBox() { Top = 20, Left = 20, Width = 200 };
+            Button btnBuscar = new Button() { Top = 60, Left = 20, Text = "Buscar NÃºmero (Binaria)" };
+            Label lblResultado = new Label() { Top = 100, Left = 20, Width = 500, Height = 200 };
+            Label lblLista = new Label() { Top = 320, Left = 20, Width = 600, Height = 60 };
 
-            this.Controls.Add(txtNumeros);
+            this.Controls.Add(txtNumeroBuscar);
             this.Controls.Add(btnBuscar);
             this.Controls.Add(lblResultado);
+            this.Controls.Add(lblLista);
 
-            // Evento click del botón
+         
+            Random rnd = new Random();
+            lista = new int[30];
+            for (int i = 0; i < lista.Length; i++)
+                lista[i] = rnd.Next(1, 101);
+
+       
+            Array.Sort(lista);
+
+        
+            lblLista.Text = "Lista ordenada: " + string.Join(", ", lista);
+
+            // Evento click
             btnBuscar.Click += (s, e) =>
             {
                 try
                 {
-                    // Convertimos el texto a lista de enteros
-                    List<int> numeros = txtNumeros.Text.Split(',')
-                                                      .Select(n => int.Parse(n.Trim()))
-                                                      .ToList();
+                    int numero = int.Parse(txtNumeroBuscar.Text.Trim());
+                    string proceso = "";
+                    int posicion = BusquedaBinaria(lista, numero, ref proceso);
 
-                    var resultado = BuscarMaxMin(numeros);
+                    lblResultado.Text = proceso + "\n";
 
-                    // Mostramos resultado
-                    lblResultado.Text = $"Máximo: {resultado.max}\nMínimo: {resultado.min}\nIteraciones: {resultado.iteraciones}";
+                    if (posicion != -1)
+                        lblResultado.Text += $"NÃºmero encontrado en la posiciÃ³n: {posicion}";
+                    else
+                        lblResultado.Text += "NÃºmero no encontrado en la lista";
                 }
                 catch
                 {
-                    lblResultado.Text = "Error: ingresa números válidos separados por comas";
+                    lblResultado.Text = "Error: ingresa un nÃºmero vÃ¡lido";
                 }
             };
         }
 
-        // Método para encontrar máximo, mínimo y cantidad de iteraciones
-        private (int max, int min, int iteraciones) BuscarMaxMin(List<int> lista)
+        private int BusquedaBinaria(int[] arr, int num, ref string proceso)
         {
-            if (lista == null || lista.Count == 0)
-                throw new ArgumentException("La lista no puede estar vacía");
+            int izquierda = 0;
+            int derecha = arr.Length - 1;
 
-            int max = lista[0];
-            int min = lista[0];
-            int iteraciones = 0;
-
-            foreach (int num in lista)
+            while (izquierda <= derecha)
             {
-                iteraciones++;
-                if (num > max) max = num;
-                if (num < min) min = num;
+                int medio = (izquierda + derecha) / 2;
+                proceso += $"Revisando sublista [{izquierda}..{derecha}], mitad: {medio}, valor: {arr[medio]}\n";
+
+                if (arr[medio] == num)
+                    return medio; // Encontrado
+                else if (arr[medio] < num)
+                    izquierda = medio + 1; 
+                else
+                    derecha = medio - 1; 
             }
 
-            return (max, min, iteraciones);
+            return -1; 
         }
     }
 }
+
