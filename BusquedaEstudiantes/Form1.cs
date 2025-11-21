@@ -1,65 +1,94 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace BusquedaEstudiantes
 {
     public partial class Form1 : Form
     {
+        private int[,] matriz; // Matriz 10x10
+
         public Form1()
         {
             InitializeComponent();
 
-            // Creamos los controles dinámicamente
-            TextBox txtNumeros = new TextBox() { Top = 20, Left = 20, Width = 200 };
-            Button btnBuscar = new Button() { Top = 60, Left = 20, Text = "Buscar Máx/Min" };
-            Label lblResultado = new Label() { Top = 100, Left = 20, Width = 300, Height = 60 };
 
-            this.Controls.Add(txtNumeros);
+            TextBox txtNumero = new TextBox() { Top = 20, Left = 20, Width = 200 };
+            Button btnBuscar = new Button() { Top = 60, Left = 20, Text = "Buscar en Matriz" };
+            Label lblResultado = new Label() { Top = 100, Left = 20, Width = 400, Height = 200 };
+            Label lblMatriz = new Label() { Top = 320, Left = 20, Width = 500, Height = 200 };
+
+            this.Controls.Add(txtNumero);
             this.Controls.Add(btnBuscar);
             this.Controls.Add(lblResultado);
+            this.Controls.Add(lblMatriz);
 
-            // Evento click del botón
+     
+            Random rnd = new Random();
+            matriz = new int[10, 10];
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    matriz[i, j] = rnd.Next(1, 101);
+                }
+            }
+
+  
+            string textoMatriz = "";
+            for (int i = 0; i < 10; i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    textoMatriz += matriz[i, j].ToString("D2") + " ";
+                }
+                textoMatriz += "\n";
+            }
+            lblMatriz.Text = textoMatriz;
+
+
             btnBuscar.Click += (s, e) =>
             {
                 try
                 {
-                    // Convertimos el texto a lista de enteros
-                    List<int> numeros = txtNumeros.Text.Split(',')
-                                                      .Select(n => int.Parse(n.Trim()))
-                                                      .ToList();
+                    int numero = int.Parse(txtNumero.Text.Trim());
+                    var posiciones = BuscarEnMatriz(matriz, numero);
 
-                    var resultado = BuscarMaxMin(numeros);
+                    if (posiciones.Count > 0)
+                    {
+                        string resultado = $"NÃºmero {numero} encontrado en las posiciones:\n";
+                        foreach (var pos in posiciones)
+                            resultado += $"Fila {pos.Item1}, Columna {pos.Item2}\n";
 
-                    // Mostramos resultado
-                    lblResultado.Text = $"Máximo: {resultado.max}\nMínimo: {resultado.min}\nIteraciones: {resultado.iteraciones}";
+                        lblResultado.Text = resultado;
+                    }
+                    else
+                    {
+                        lblResultado.Text = $"NÃºmero {numero} no encontrado en la matriz.";
+                    }
                 }
                 catch
                 {
-                    lblResultado.Text = "Error: ingresa números válidos separados por comas";
+                    lblResultado.Text = "Error: ingresa un nÃºmero vÃ¡lido";
                 }
             };
         }
 
-        // Método para encontrar máximo, mínimo y cantidad de iteraciones
-        private (int max, int min, int iteraciones) BuscarMaxMin(List<int> lista)
+
+        private System.Collections.Generic.List<(int, int)> BuscarEnMatriz(int[,] matriz, int numero)
         {
-            if (lista == null || lista.Count == 0)
-                throw new ArgumentException("La lista no puede estar vacía");
+            var posiciones = new System.Collections.Generic.List<(int, int)>();
 
-            int max = lista[0];
-            int min = lista[0];
-            int iteraciones = 0;
-
-            foreach (int num in lista)
+            for (int i = 0; i < matriz.GetLength(0); i++)
             {
-                iteraciones++;
-                if (num > max) max = num;
-                if (num < min) min = num;
+                for (int j = 0; j < matriz.GetLength(1); j++)
+                {
+                    if (matriz[i, j] == numero)
+                        posiciones.Add((i, j));
+                }
             }
 
-            return (max, min, iteraciones);
+            return posiciones;
         }
     }
 }
+
