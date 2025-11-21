@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace BusquedaEstudiantes
@@ -11,55 +9,56 @@ namespace BusquedaEstudiantes
         {
             InitializeComponent();
 
-            // Creamos los controles dinámicamente
-            TextBox txtNumeros = new TextBox() { Top = 20, Left = 20, Width = 200 };
-            Button btnBuscar = new Button() { Top = 60, Left = 20, Text = "Buscar Máx/Min" };
-            Label lblResultado = new Label() { Top = 100, Left = 20, Width = 300, Height = 60 };
 
-            this.Controls.Add(txtNumeros);
+            TextBox txtParrafo = new TextBox() { Top = 20, Left = 20, Width = 400, Height = 80, Multiline = true, Text = "Escribe aquÃ­ un pÃ¡rrafo para buscar palabras." };
+            TextBox txtPalabra = new TextBox() { Top = 110, Left = 20, Width = 200 };
+            Button btnBuscar = new Button() { Top = 150, Left = 20, Text = "Buscar palabra" };
+            Label lblResultado = new Label() { Top = 190, Left = 20, Width = 400, Height = 60 };
+
+            this.Controls.Add(txtParrafo);
+            this.Controls.Add(txtPalabra);
             this.Controls.Add(btnBuscar);
             this.Controls.Add(lblResultado);
 
-            // Evento click del botón
             btnBuscar.Click += (s, e) =>
             {
-                try
-                {
-                    // Convertimos el texto a lista de enteros
-                    List<int> numeros = txtNumeros.Text.Split(',')
-                                                      .Select(n => int.Parse(n.Trim()))
-                                                      .ToList();
+                string parrafo = txtParrafo.Text;
+                string palabra = txtPalabra.Text;
 
-                    var resultado = BuscarMaxMin(numeros);
-
-                    // Mostramos resultado
-                    lblResultado.Text = $"Máximo: {resultado.max}\nMínimo: {resultado.min}\nIteraciones: {resultado.iteraciones}";
-                }
-                catch
+                if (string.IsNullOrWhiteSpace(parrafo) || string.IsNullOrWhiteSpace(palabra))
                 {
-                    lblResultado.Text = "Error: ingresa números válidos separados por comas";
+                    lblResultado.Text = "Ingresa un pÃ¡rrafo y una palabra vÃ¡lidos.";
+                    return;
                 }
+
+                int cantidad = ContarPalabra(parrafo, palabra);
+                lblResultado.Text = $"La palabra '{palabra}' aparece {cantidad} veces en el pÃ¡rrafo.";
             };
         }
 
-        // Método para encontrar máximo, mínimo y cantidad de iteraciones
-        private (int max, int min, int iteraciones) BuscarMaxMin(List<int> lista)
+
+        private int ContarPalabra(string parrafo, string palabra)
         {
-            if (lista == null || lista.Count == 0)
-                throw new ArgumentException("La lista no puede estar vacía");
+            parrafo = parrafo.ToLower();
+            palabra = palabra.ToLower();
+            int contador = 0;
 
-            int max = lista[0];
-            int min = lista[0];
-            int iteraciones = 0;
-
-            foreach (int num in lista)
+            for (int i = 0; i <= parrafo.Length - palabra.Length; i++)
             {
-                iteraciones++;
-                if (num > max) max = num;
-                if (num < min) min = num;
+                bool coincide = true;
+                for (int j = 0; j < palabra.Length; j++)
+                {
+                    if (parrafo[i + j] != palabra[j])
+                    {
+                        coincide = false;
+                        break;
+                    }
+                }
+                if (coincide) contador++;
             }
 
-            return (max, min, iteraciones);
+            return contador;
         }
     }
 }
+
