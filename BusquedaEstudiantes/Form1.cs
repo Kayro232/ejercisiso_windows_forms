@@ -1,65 +1,67 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace BusquedaEstudiantes
 {
     public partial class Form1 : Form
     {
+        private int[] arreglo; 
+
         public Form1()
         {
             InitializeComponent();
 
-            // Creamos los controles dinámicamente
-            TextBox txtNumeros = new TextBox() { Top = 20, Left = 20, Width = 200 };
-            Button btnBuscar = new Button() { Top = 60, Left = 20, Text = "Buscar Máx/Min" };
+      
+            TextBox txtNumeroBuscar = new TextBox() { Top = 20, Left = 20, Width = 200 };
+            Button btnBuscar = new Button() { Top = 60, Left = 20, Text = "Buscar NÃºmero" };
             Label lblResultado = new Label() { Top = 100, Left = 20, Width = 300, Height = 60 };
+            Label lblArreglo = new Label() { Top = 180, Left = 20, Width = 400, Height = 60 };
 
-            this.Controls.Add(txtNumeros);
+            this.Controls.Add(txtNumeroBuscar);
             this.Controls.Add(btnBuscar);
             this.Controls.Add(lblResultado);
+            this.Controls.Add(lblArreglo);
 
-            // Evento click del botón
+            
+            Random rnd = new Random();
+            arreglo = new int[20];
+            for (int i = 0; i < arreglo.Length; i++)
+            {
+                arreglo[i] = rnd.Next(1, 101);
+            }
+
+           
+            lblArreglo.Text = "Arreglo: " + string.Join(", ", arreglo);
+
+ 
             btnBuscar.Click += (s, e) =>
             {
                 try
                 {
-                    // Convertimos el texto a lista de enteros
-                    List<int> numeros = txtNumeros.Text.Split(',')
-                                                      .Select(n => int.Parse(n.Trim()))
-                                                      .ToList();
+                    int numero = int.Parse(txtNumeroBuscar.Text.Trim());
+                    int posicion = BusquedaLineal(arreglo, numero);
 
-                    var resultado = BuscarMaxMin(numeros);
-
-                    // Mostramos resultado
-                    lblResultado.Text = $"Máximo: {resultado.max}\nMínimo: {resultado.min}\nIteraciones: {resultado.iteraciones}";
+                    if (posicion != -1)
+                        lblResultado.Text = $"NÃºmero encontrado en la posiciÃ³n: {posicion}";
+                    else
+                        lblResultado.Text = "NÃºmero no encontrado en el arreglo";
                 }
                 catch
                 {
-                    lblResultado.Text = "Error: ingresa números válidos separados por comas";
+                    lblResultado.Text = "Error: ingresa un nÃºmero vÃ¡lido";
                 }
             };
         }
 
-        // Método para encontrar máximo, mínimo y cantidad de iteraciones
-        private (int max, int min, int iteraciones) BuscarMaxMin(List<int> lista)
+
+        private int BusquedaLineal(int[] arr, int num)
         {
-            if (lista == null || lista.Count == 0)
-                throw new ArgumentException("La lista no puede estar vacía");
-
-            int max = lista[0];
-            int min = lista[0];
-            int iteraciones = 0;
-
-            foreach (int num in lista)
+            for (int i = 0; i < arr.Length; i++)
             {
-                iteraciones++;
-                if (num > max) max = num;
-                if (num < min) min = num;
+                if (arr[i] == num)
+                    return i;
             }
-
-            return (max, min, iteraciones);
+            return -1; // Retorna -1 si no lo encuentra
         }
     }
 }
